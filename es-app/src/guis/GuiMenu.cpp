@@ -421,49 +421,6 @@ void GuiMenu::openSoundSettings()
 		s->addWithLabel(_("LOWER MUSIC WHEN PLAYING VIDEO"), videolowermusic);
 		s->addSaveFunc([videolowermusic] { Settings::getInstance()->setBool("VideoLowersMusic", videolowermusic->getState()); });
 
-	// Verbal Battery Voices
-	auto VerbalbatteryVoice = std::make_shared<OptionListComponent<std::string> >(mWindow, _("Verbal BATTERY Voice"), false);
-	VerbalbatteryVoice->addRange({ { _("MALE 1"), "male1" },{ _("MALE 2"), "male2" },{ _("FEMALE"), "female" } }, Settings::getInstance()->getString("VerbalBatteryVoice"));
-	s->addWithLabel(_("VERBAL BATTERY VOICE"), VerbalbatteryVoice);
-	s->addSaveFunc([s, VerbalbatteryVoice]
-	{
-		std::string old_value = Settings::getInstance()->getString("VerbalBatteryVoice");
-		if (old_value != VerbalbatteryVoice->getSelected())
-           {
-            if (strstr(VerbalbatteryVoice->getSelected().c_str(),"male1")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.MBROLA_VOICE*) ] && rm /home/ark/.config/.MBROLA_VOICE*", "", nullptr);
-            }
-            else if (strstr(VerbalbatteryVoice->getSelected().c_str(),"male2")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.MBROLA_VOICE*) ] && rm /home/ark/.config/.MBROLA_VOICE*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.MBROLA_VOICE_MALE3", "", nullptr);
-            }
-            else {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.MBROLA_VOICE*) ] && rm /home/ark/.config/.MBROLA_VOICE*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.MBROLA_VOICE_FEMALE", "", nullptr);
-            }
-			Settings::getInstance()->setString("VerbalBatteryVoice", VerbalbatteryVoice->getSelected());
-		   }
-	});
-
-	// Verbal Battery Warning indicator
-	auto VerbalbatteryStatus = std::make_shared<OptionListComponent<std::string> >(mWindow, _("Verbal BATTERY Warning"), false);
-	VerbalbatteryStatus->addRange({ { _("OFF"), "no" },{ _("ON"), "yes" } }, Settings::getInstance()->getString("VerbalBatteryWarning"));
-	s->addWithLabel(_("VERBAL BATTERY WARNING"), VerbalbatteryStatus);
-	s->addSaveFunc([s, VerbalbatteryStatus]
-	{
-		std::string old_value = Settings::getInstance()->getString("VerbalBatteryWarning");
-		if (old_value != VerbalbatteryStatus->getSelected())
-           {
-            if (strstr(VerbalbatteryStatus->getSelected().c_str(),"no")) {
-              runSystemCommand("[ -z $(find /home/ark/.config/.NOVERBALBATTERYWARNING) ] && touch /home/ark/.config/.NOVERBALBATTERYWARNING", "", nullptr);
-            }
-            else {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.NOVERBALBATTERYWARNING) ] && rm /home/ark/.config/.NOVERBALBATTERYWARNING", "", nullptr);
-            }
-			Settings::getInstance()->setString("VerbalBatteryWarning", VerbalbatteryStatus->getSelected());
-		   }
-	});
-
 #ifdef _RPI_
 		// OMX player Audio Device
 		auto omx_audio_dev = std::make_shared< OptionListComponent<std::string> >(mWindow, "OMX PLAYER AUDIO DEVICE", false);
@@ -1314,60 +1271,6 @@ void GuiMenu::openUISettings()
 		}
 	});
 
-	// Game Loading Image Mode
-	auto GameLoadingImageMode = std::make_shared<OptionListComponent<std::string> >(mWindow, _("Game Loading Image Mode"), false);
-	GameLoadingImageMode->addRange({ { _("PIC"), "pic" },{ _("ASCII"), "ascii" },{ _("NONE"), "none" } }, Settings::getInstance()->getString("GameLoadingIMode"));
-	s->addWithLabel(_("GAME LOADING IMAGE MODE"), GameLoadingImageMode);
-	s->addSaveFunc([s, GameLoadingImageMode]
-	{
-		std::string old_value = Settings::getInstance()->getString("GameLoadingIMode");
-		if (old_value != GameLoadingImageMode->getSelected())
-           {
-            if (strstr(GameLoadingImageMode->getSelected().c_str(),"ascii")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.GameLoadingIMode*) ] && rm /home/ark/.config/.GameLoadingIMode*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.GameLoadingIModeASCII", "", nullptr);
-            }
-            else if (strstr(GameLoadingImageMode->getSelected().c_str(),"pic")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.GameLoadingIMode*) ] && rm /home/ark/.config/.GameLoadingIMode*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.GameLoadingIModePIC", "", nullptr);
-            }
-            else {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.GameLoadingIMode*) ] && rm /home/ark/.config/.GameLoadingIMode*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.GameLoadingIModeNO", "", nullptr);
-            }
-			Settings::getInstance()->setString("GameLoadingIMode", GameLoadingImageMode->getSelected());
-		   }
-	});
-
-	// Game Loading Image
-    if (strstr(GameLoadingImageMode->getSelected().c_str(),"pic")){
-	 auto GameLoadingImage = std::make_shared<OptionListComponent<std::string> >(mWindow, _("Game Loading Image"), false);
-	 GameLoadingImage->addRange({ { _("DEFAULT"), "default" },{ _("MARQUEE"), "marquee" },{ _("IMAGE"), "image" },{ _("THUMB"), "thumb" } }, Settings::getInstance()->getString("GameLoadingImage"));
-	 s->addWithLabel(_("GAME LOADING IMAGE"), GameLoadingImage);
-	 s->addSaveFunc([s, GameLoadingImage]
-	 {
-		std::string old_value = Settings::getInstance()->getString("GameLoadingImage");
-		if (old_value != GameLoadingImage->getSelected())
-           {
-            if (strstr(GameLoadingImage->getSelected().c_str(),"default")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.LOADING_IMAGE*) ] && rm /home/ark/.config/.LOADING_IMAGE*", "", nullptr);
-            }
-            else if (strstr(GameLoadingImage->getSelected().c_str(),"marquee")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.LOADING_IMAGE*) ] && rm /home/ark/.config/.LOADING_IMAGE*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.LOADING_IMAGE_MARQUEE", "", nullptr);
-            }
-            else if (strstr(GameLoadingImage->getSelected().c_str(),"image")) {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.LOADING_IMAGE*) ] && rm /home/ark/.config/.LOADING_IMAGE*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.LOADING_IMAGE_IMAGE", "", nullptr);
-            }
-            else {
-              runSystemCommand("[ ! -z $(find /home/ark/.config/.LOADING_IMAGE*) ] && rm /home/ark/.config/.LOADING_IMAGE*", "", nullptr);
-              runSystemCommand("touch /home/ark/.config/.LOADING_IMAGE_THUMB", "", nullptr);
-            }
-			Settings::getInstance()->setString("GameLoadingImage", GameLoadingImage->getSelected());
-		   }
-	 });
-	}
 	s->updatePosition();
 	mWindow->pushGui(s);
 }
@@ -1586,20 +1489,7 @@ void GuiMenu::openOtherSettings()
 	Window* window = mWindow;
 	auto s = new GuiSettings(mWindow, _("ADVANCED SETTINGS"));
 
-	/*
-	// Emulator settings 
-	for (auto system : SystemData::sSystemVector)
-	{
-		if (system->isCollection() || system->getSystemEnvData()->mEmulators.size() == 0 || (system->getSystemEnvData()->mEmulators.size() == 1 && system->getSystemEnvData()->mEmulators[0].mCores.size() <= 1))
-			continue;
-
-		s->addEntry(_("EMULATOR SETTINGS"), true, [this] { openEmulatorSettings(); }, "iconGames");
-		break;
-	}
-	*/
-
 	//Timezone - Adapted from emuelec
-
 	auto es_timezones = std::make_shared<OptionListComponent<std::string> >(mWindow, _("TIMEZONE"), false);
 
 	std::string currentTimezone = SystemConf::getInstance()->get("system.timezone");
@@ -1629,7 +1519,6 @@ void GuiMenu::openOtherSettings()
 	s->addSaveFunc([tmFormat] { Settings::getInstance()->setBool("ClockMode12", tmFormat->getState()); });
 
     //Switch A and B buttons
-    
 	auto invertJoy = std::make_shared<SwitchComponent>(mWindow);
 	invertJoy->setState(Settings::getInstance()->getBool("InvertButtons"));
 	s->addWithLabel(_("SWITCH A/B BUTTONS IN EMULATIONSTATION"), invertJoy);
@@ -1639,22 +1528,6 @@ void GuiMenu::openOtherSettings()
 		{
 			InputConfig::AssignActionButtons();
 			ViewController::get()->reloadAll(mWindow);
-		}
-	});
-
-    //Flip power button suspend/poweroff function
-    
-	auto powerBtn = std::make_shared<SwitchComponent>(mWindow);
-	powerBtn->setState(Settings::getInstance()->getBool("InvertPwrBtn"));
-	s->addWithLabel(_("SWITCH POWER BUTTON TAP TO OFF"), powerBtn);
-	s->addSaveFunc([this, s, powerBtn]
-	{
-		if (Settings::getInstance()->setBool("InvertPwrBtn", powerBtn->getState()))
-		{
-          if (Settings::getInstance()->getBool("InvertPwrBtn") == 1)
-            runSystemCommand("[ -z $(find /home/ark/.config/.SWAPPOWERANDSUSPEND) ] && touch /home/ark/.config/.SWAPPOWERANDSUSPEND", "", nullptr);
-		  else
-            runSystemCommand("[ ! -z $(find /home/ark/.config/.SWAPPOWERANDSUSPEND) ] && rm /home/ark/.config/.SWAPPOWERANDSUSPEND", "", nullptr);
 		}
 	});
 
@@ -1684,7 +1557,6 @@ void GuiMenu::openOtherSettings()
 	});
 
 	// LANGUAGE
-
 	std::vector<std::string> langues;
 	langues.push_back("en");
 
@@ -1740,50 +1612,11 @@ void GuiMenu::openOtherSettings()
 		}
 	}
 
-
 	// maximum vram
 	auto max_vram = std::make_shared<SliderComponent>(mWindow, 40.f, 1000.f, 10.f, "Mb");
 	max_vram->setValue((float)(Settings::getInstance()->getInt("MaxVRAM")));
 	s->addWithLabel(_("VRAM LIMIT"), max_vram);
 	s->addSaveFunc([max_vram] { Settings::getInstance()->setInt("MaxVRAM", (int)Math::round(max_vram->getValue())); });
-
-
-	/*
-#if WIN32
-
-	// Enable updates
-	auto updates_enabled = std::make_shared<SwitchComponent>(mWindow);
-	updates_enabled->setState(Settings::getInstance()->getBool("updates.enabled"));
-	s->addWithLabel(_("AUTO UPDATES"), updates_enabled);
-	s->addSaveFunc([updates_enabled]
-	{
-		Settings::getInstance()->setBool("updates.enabled", updates_enabled->getState());
-	});
-
-	// Start update
-	s->addEntry(ApiSystem::state == UpdateState::State::UPDATE_READY ? _("APPLY UPDATE") : _("START UPDATE"), true, [this]
-	{
-		if (ApiSystem::checkUpdateVersion().empty())
-		{
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("NO UPDATE AVAILABLE")));
-			return;
-		}
-
-		if (ApiSystem::state == UpdateState::State::UPDATE_READY)
-		{
-			if (quitES(QuitMode::QUIT))
-				LOG(LogWarning) << "Reboot terminated with non-zero result!";
-		}
-		else if (ApiSystem::state == UpdateState::State::UPDATER_RUNNING)
-			mWindow->pushGui(new GuiMsgBox(mWindow, _("UPDATE IS ALREADY RUNNING")));
-		else
-			ApiSystem::startUpdate(mWindow);
-	});
-#endif
-*/
-
-
-
 
 	// gamelists
 	auto save_gamelists = std::make_shared<SwitchComponent>(mWindow);
@@ -1813,6 +1646,7 @@ void GuiMenu::openOtherSettings()
 	});
 
 #ifdef _RPI_
+
 	// Video Player - VideoOmxPlayer
 	auto omx_player = std::make_shared<SwitchComponent>(mWindow);
 	omx_player->setState(Settings::getInstance()->getBool("VideoOmxPlayer"));
@@ -1888,39 +1722,6 @@ void GuiMenu::openOtherSettings()
 	s->addWithLabel(_("Default Emulator Governor"), gdepg);
 	s->addSaveFunc([this, gdepg] { Settings::getInstance()->setString("GlobalPerformanceGovernor", gdepg->getSelected()); });
 
-	// Auto Suspend Timeout
-	auto Tout = std::make_shared< OptionListComponent<std::string> >(mWindow, _("Auto Suspend Timeout (mins)"), false);
-	std::vector<std::string> asuspend;
-	asuspend.push_back("Off");
-	asuspend.push_back("5");
-	asuspend.push_back("10");
-	asuspend.push_back("15");
-	asuspend.push_back("20");
-	asuspend.push_back("25");
-	asuspend.push_back("30");
-	asuspend.push_back("35");
-	asuspend.push_back("40");
-	asuspend.push_back("45");
-	asuspend.push_back("50");
-	asuspend.push_back("55");
-	asuspend.push_back("60");
-
-	auto suspend = Settings::getInstance()->getString("AutoSuspendTimeout");
-	if (suspend.empty())
-		suspend = "Off";
-
-	for (auto it = asuspend.cbegin(); it != asuspend.cend(); it++)
-		Tout->add(_(it->c_str()), *it, suspend == *it);
-
-	s->addWithLabel(_("Auto Suspend Timeout (mins)"), Tout);
-	s->addSaveFunc([this, Tout] { Settings::getInstance()->setString("AutoSuspendTimeout", Tout->getSelected()); 
-		if (Tout->changed()) {
-		    runSystemCommand("echo " + Settings::getInstance()->getString("AutoSuspendTimeout") + " > /home/ark/.config/.TIMEOUT", "", nullptr);
-		    runSystemCommand("/usr/local/bin/auto_suspend_update.sh", "", nullptr);
-		}
-	});
-	     
-
 #ifndef _RPI_
 	// full exit
 	auto fullExitMenu = std::make_shared<SwitchComponent>(mWindow);
@@ -1955,9 +1756,6 @@ void GuiMenu::openOtherSettings()
 		}
 	});
 
-
-
-
 	s->updatePosition();
 
 	auto pthis = this;
@@ -1978,8 +1776,6 @@ void GuiMenu::openOtherSettings()
 void GuiMenu::openConfigInput()
 {
 	Window* window = mWindow;
-//	window->pushGui(new GuiDetectDevice(window, false, nullptr));
-		
 	window->pushGui(new GuiMsgBox(window, _("ARE YOU SURE YOU WANT TO CONFIGURE INPUT?"), _("YES"),
 		[window] {
 		window->pushGui(new GuiDetectDevice(window, false, nullptr));
